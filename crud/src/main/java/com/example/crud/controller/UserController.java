@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 
-@RequestMapping("/User")
+@RequestMapping("/user")
 public class UserController {
 
   @Autowired
@@ -22,7 +22,7 @@ public class UserController {
   public List<UserResponseDto>getAllUsers(){
     return userService.getUsers();
   }  
-  @PatchMapping("")
+  @PostMapping("")
   public UserResponseDto createUser(@RequestBody UserDto userDto){
     return userService.createUser(userDto) ;
   }
