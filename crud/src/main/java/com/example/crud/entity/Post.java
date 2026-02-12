@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -27,6 +29,11 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+     @OneToMany(cascade = CascadeType.ALL)
+    List<Like> likes  = new ArrayList<>() ;
+
+
    
     @PrePersist
     public void prePersist(){

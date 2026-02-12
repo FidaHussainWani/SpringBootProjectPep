@@ -44,6 +44,9 @@ public class User {
             orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
+    @OneToMany(cascade = CascadeType.ALL)
+    List<Like> likes =new ArrayList<>();
+
     public void addPost(Post post) {
         posts.add(post);
         post.setUser(this);
