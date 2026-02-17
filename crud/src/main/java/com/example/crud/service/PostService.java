@@ -21,7 +21,7 @@ public class PostService {
         postResponseDto.setUsername(username);
         postResponseDto.setContent(post.getContent());
         postResponseDto.setCreatedAt(post.getCreatedAt());
-        postResponseDto.setMediaUrl(post.getMediaUrl());
+        postResponseDto.setMediaUrl(post.getContentUrl());
 
         return postResponseDto;
 
@@ -41,7 +41,8 @@ public class PostService {
     }
 
     public PostResponseDto findById(Long id) {
-        Post post =  postRepository.findById(id).get();
+        Post post = postRepository.findById(id)
+    .orElseThrow(() -> new RuntimeException("Post not found"));
         return toDto(post);
     }
 
@@ -54,8 +55,8 @@ public class PostService {
     }
 
     public PostResponseDto create(Post post){
-        postRepository.save(post);
-        return toDto(post) ;
+       Post saved= postRepository.save(post);
+        return toDto(saved) ;
     }
 
     public PostResponseDto update(Post post){
@@ -65,12 +66,13 @@ public class PostService {
         if(post.getContent() !=null){
             oldPost.setContent(post.getContent());
         }
-        if(post.getMediaUrl() !=null){
-            oldPost.setMediaUrl(post.getMediaUrl());
+        if(post.getContentUrl() !=null){
+            oldPost.setContentUrl(post.getContentUrl());
         }
 
 
-        postRepository.save(post);
+       Post saved = postRepository.save(oldPost);
+
 
         return toDto(post) ;
     }

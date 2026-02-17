@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.example.crud.entity.Comment;
 
 
 // this is a entity class and it represents a table in database
@@ -44,8 +45,13 @@ public class User {
             orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     List<Like> likes =new ArrayList<>();
+
+     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    List<Comment> comments  = new ArrayList<>() ;
+    
+
 
     public void addPost(Post post) {
         posts.add(post);

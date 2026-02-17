@@ -1,5 +1,6 @@
 package com.example.crud.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,22 +14,27 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Like {
+@Table(
+        name = "likes",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"user_id", "post_id"})
+        }
+)
+public class Like{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     long id ;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User user  ;
+    User user;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
-    Post post ;
+    Post post;
 
-    LocalDateTime createdAt ;
+    LocalDateTime createdAt;
 
     @PrePersist
     public void prePersist() {

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +31,10 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-     @OneToMany(cascade = CascadeType.ALL)
+     @OneToMany(mappedBy = "post" ,cascade = CascadeType.ALL)
     List<Like> likes  = new ArrayList<>() ;
+     @OneToMany(mappedBy = "post",cascade = CascadeType.ALL)
+    List<Comment> comments  = new ArrayList<>() ;
 
 
    
