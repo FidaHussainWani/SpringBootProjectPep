@@ -3,11 +3,17 @@ package com.example.crud.controller;
 
 import com.example.crud.Authentication.JwtUtil;
 import com.example.crud.dto.LoginRequestDto;
+import com.example.crud.dto.UserDto;
 import com.example.crud.entity.Token;
 import com.example.crud.entity.User;
+import com.example.crud.entity.UserInfo;
 import com.example.crud.entity.VerficationStatus;
 import com.example.crud.repository.TokenRepository;
 import com.example.crud.repository.UserRepository;
+import com.example.crud.service.UserService;
+
+import jakarta.mail.MessagingException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +29,9 @@ public class AuthController {
 
     @Autowired
     TokenRepository tokenRepository;
+
+    @Autowired
+    private UserService userService;
 
     public AuthController(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -46,6 +55,17 @@ public class AuthController {
         return ResponseEntity.status(401).body("Invalid credentials");
     }
 
+  
+@PostMapping("/register")
+public ResponseEntity<String>register(@RequestBody UserDto userDto){
+    try{
+        userService.createUser(userDto);
+        return ResponseEntity.ok("User registered Successfully");
+    }catch(MessagingException e){
+        return ResponseEntity.status(401).body("Invalid credentials");
+    }
+}
+
 
     @GetMapping("/verify")
     public ResponseEntity<String> verify(@RequestParam String token) {
@@ -58,4 +78,5 @@ public class AuthController {
       return ResponseEntity.ok("User is verified") ;
 
     }
+    
 }

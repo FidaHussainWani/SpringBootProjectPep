@@ -2,17 +2,24 @@ package com.example.crud.service;
 
 import com.example.crud.dto.PostResponseDto;
 import com.example.crud.entity.Post;
+import com.example.crud.entity.User;
 import com.example.crud.repository.PostRepository;
+import com.example.crud.repository.UserRepository;
+import com.example.crud.service.FileUploadService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 @Service
 public class PostService {
      @Autowired
     private PostRepository postRepository;
-
+  @Autowired
+  private FileUploadService fileUploadService;
+  @Autowired
+  private UserRepository userRepository;
 
 
     private PostResponseDto toDto(Post post){
@@ -36,7 +43,7 @@ public class PostService {
 
 
     public List<PostResponseDto> findAllByUserId(Long userId) {
-        List<Post> posts = postRepository.findAllByUserId(userId);
+        List<Post> posts = postRepository.findAllByUserId(long userId);
         return posts.stream().map(this::toDto).toList();
     }
 
@@ -54,7 +61,13 @@ public class PostService {
 
     }
 
-    public PostResponseDto create(Post post){
+    public PostResponseDto create(String content,MultipartFile file, User user){
+        Post post=new Post();
+        post.setContent(content);
+        post.setUser(user);
+        String url =fileUploadService.uploadFile(file);
+        post.setMediaUrl(url);
+
        Post saved= postRepository.save(post);
         return toDto(saved) ;
     }

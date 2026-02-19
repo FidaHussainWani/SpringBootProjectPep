@@ -88,7 +88,7 @@ public class UserService {
         
         userRepository.save(user);
         userInfoRepository.save(user.getUserInfo());
-        userRepository.save(token);
+        tokenRepository.save(token);
 
         return toResponseDto(user);
 
