@@ -2,17 +2,19 @@ package com.example.crud.controller;
 
 import com.example.crud.dto.UserDto;
 import com.example.crud.dto.UserResponseDto;
-import com.example.crud.entity.User;
 import com.example.crud.service.UserService;
+import com.example.crud.entity.User;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 
 @RestController
 
-@RequestMapping("/users")
+@RequestMapping("/user")
 public class UserController {
 
   @Autowired
@@ -23,8 +25,13 @@ public class UserController {
     return userService.getUsers();
   }  
   @PostMapping("")
-  public UserResponseDto createUser(@RequestBody UserDto userDto){
-    return userService.createUser(userDto) ;
+  public ResponseEntity<UserResponseDto> createUser(@RequestBody UserDto userDto){
+    try{
+            return ResponseEntity.ok(userService.createUser(userDto));
+        } catch (MessagingException e) {
+
+            return ResponseEntity.badRequest().build();
+        }
   }
 
    @GetMapping("/{id}")

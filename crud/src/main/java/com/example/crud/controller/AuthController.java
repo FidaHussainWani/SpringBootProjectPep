@@ -1,0 +1,61 @@
+package com.example.crud.controller;
+
+
+import com.example.crud.Authentication.JwtUtil;
+import com.example.crud.dto.LoginRequestDto;
+import com.example.crud.entity.Token;
+import com.example.crud.entity.User;
+import com.example.crud.entity.VerficationStatus;
+import com.example.crud.repository.TokenRepository;
+import com.example.crud.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    private final JwtUtil jwtUtil;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    TokenRepository tokenRepository;
+
+    public AuthController(JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
+
+        User user  = userRepository.findByUsername(request.getUsername());
+        
+        if (user.getPassword().equals(request.getPassword())) {
+
+            String token = jwtUtil.generateToken(
+                    request.getUsername(),
+                    "USER"
+            );
+
+            return ResponseEntity.ok(token);
+        }
+
+        return ResponseEntity.status(401).body("Invalid credentials");
+    }
+
+
+    @GetMapping("/verify")
+    public ResponseEntity<String> verify(@RequestParam String token) {
+
+      Token t  = tokenRepository.findByToken(token) ;
+      User user = t.getUser() ;
+      user.getUserInfo().setVerificationStatus(VerficationStatus.VERIFIED);
+
+
+      return ResponseEntity.ok("User is verified") ;
+
+    }
+}

@@ -4,14 +4,21 @@ package com.example.crud.service;
 import com.example.crud.dto.UserDto;
 import com.example.crud.dto.UserResponseDto;
 import com.example.crud.entity.UserInfo;
+import com.example.crud.entity.Token;
+import com.example.crud.entity.VerficationStatus;
+import com.example.crud.repository.TokenRepository;
 import com.example.crud.repository.UserInfoRepository;
 import com.example.crud.repository.UserRepository;
+
+import jakarta.mail.MessagingException;
+
 import com.example.crud.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -20,6 +27,11 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     private UserInfoRepository userInfoRepository;
+    @Autowired
+    private TokenRepository tokenRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     private User toEntity(UserDto userDto){
         User user = new User();
@@ -60,12 +72,23 @@ public class UserService {
 
         return userDto;
     }
-    public UserResponseDto createUser(UserDto userDto) {
+    public UserResponseDto createUser(UserDto userDto)throws MessagingException {
 
 
         User user   = toEntity(userDto) ;
+        user.getUserInfo().setVerificationStatus(VerficationStatus.ONGOING);
+        Token token =new Token();
+        token.setUser(user);
+        UUID uuid = UUID.randomUUID();
+        token.setToken(uuid.toString() );
+
+        
+        sendVerificationEmail(user,uuid.toString());
+        
+        
         userRepository.save(user);
         userInfoRepository.save(user.getUserInfo());
+        userRepository.save(token);
 
         return toResponseDto(user);
 
@@ -94,6 +117,11 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         UserInfo userInfo = user.getUserInfo();
+        if (userInfo == null) {
+        userInfo = new UserInfo();
+        userInfo.setUser(user);   // important for relationship
+        user.setUserInfo(userInfo);
+    }
 
         if (userDto.getUsername() != null) {
             user.setUsername(userDto.getUsername());
@@ -133,6 +161,33 @@ public class UserService {
         return toResponseDto(user);
     }
 
+public void sendVerificationEmail(User user , String token)
+            throws MessagingException {
+
+        String verificationUrl =
+                "http://localhost:8080/api/auth/verify?token=" + token;
+
+        String htmlContent = """
+            <html>
+                <body>
+                    <h2>Email Verification</h2>
+                    <p>Please click the button below to verify your account:</p>
+                    <a href="%s"
+                       style="padding:10px 20px;
+                              background-color:#4CAF50;
+                              color:white;
+                              text-decoration:none;
+                              border-radius:5px;">
+                       Verify Account
+                    </a>
+                </body>
+            </html>
+            """.formatted(verificationUrl);
+
+        String email = user.getEmail() ;
+
+        emailService.sendHtmlMail(email, "Verify Your Account", htmlContent);
+    }
 
 
 
