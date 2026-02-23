@@ -44,11 +44,11 @@ public class CommentService {
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
-
-
-
+          if (comment.getUser().getId()!=userId) {
+        throw new RuntimeException("You can update only your comment");
+    }
         comment.setComment(content);
-        return comment;
+        return commentRepository.save(comment);
     }
 
     @Transactional
@@ -57,6 +57,10 @@ public class CommentService {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
+          if (!isAdmin && comment.getUser().getId() != userId)
+ {
+        throw new RuntimeException("Not authorized to delete this comment");
+    }
 
 
         commentRepository.delete(comment);

@@ -25,6 +25,7 @@ public class PostService {
     private PostResponseDto toDto(Post post){
         String  username = post.getUser().getUsername();
         PostResponseDto postResponseDto = new PostResponseDto();
+         postResponseDto.setId(post.getId()); 
         postResponseDto.setUsername(username);
         postResponseDto.setContent(post.getContent());
         postResponseDto.setCreatedAt(post.getCreatedAt());
@@ -43,7 +44,7 @@ public class PostService {
 
 
     public List<PostResponseDto> findAllByUserId(Long userId) {
-        List<Post> posts = postRepository.findAllByUserId(long userId);
+        List<Post> posts = postRepository.findAllByUserId(userId);
         return posts.stream().map(this::toDto).toList();
     }
 
@@ -65,8 +66,9 @@ public class PostService {
         Post post=new Post();
         post.setContent(content);
         post.setUser(user);
-        String url =fileUploadService.uploadFile(file);
-        post.setMediaUrl(url);
+       if (file != null && !file.isEmpty()){ String url =fileUploadService.uploadFile(file);
+        post.setContentUrl(url);
+       }
 
        Post saved= postRepository.save(post);
         return toDto(saved) ;
@@ -87,7 +89,7 @@ public class PostService {
        Post saved = postRepository.save(oldPost);
 
 
-        return toDto(post) ;
+        return toDto(saved) ;
     }
    
 }

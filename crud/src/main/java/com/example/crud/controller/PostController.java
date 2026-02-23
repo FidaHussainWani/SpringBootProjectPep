@@ -3,6 +3,7 @@ package com.example.crud.controller;
 import com.example.crud.Authentication.JwtUtil;
 import com.example.crud.dto.PostResponseDto;
 import com.example.crud.entity.Post;
+import com.example.crud.entity.User;
 import com.example.crud.repository.UserRepository;
 import com.example.crud.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public ResponseEntity<PostResponseDto>create(@RequestParam("content")String cont
      if(jwtUtil.validateToken(token)){
                 String username = jwtUtil.extractUsername(token);
                   User user = userRepository.findByUsername(username);
-                 PostResponseDto  response =  postService.create(content, file, username);
+                 PostResponseDto  response =  postService.create(content, file, user);
                 return ResponseEntity.ok().body(response);
             }
     

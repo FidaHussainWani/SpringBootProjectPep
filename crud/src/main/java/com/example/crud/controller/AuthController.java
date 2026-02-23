@@ -40,7 +40,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto request) {
 
-        User user  = userRepository.findByUsername(request.getUsername());
+       User user = userRepository.findByUsername(request.getUsername())
+        .orElseThrow(() -> new RuntimeException("User not found"));
         
         if (user.getPassword().equals(request.getPassword())) {
 
