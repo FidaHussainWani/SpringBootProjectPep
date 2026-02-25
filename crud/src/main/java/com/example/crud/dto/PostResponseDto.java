@@ -11,11 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PostResponseDto {
 
-   private Long id;
    private String content;
    private String mediaUrl;
    private LocalDateTime createdAt;
    private String username;
-
+    private int likeCount ;
+    private int commentsCount ;
 }
 
