@@ -6,7 +6,7 @@ import com.example.crud.dto.UserResponseDto;
 import com.example.crud.entity.UserInfo;
 import com.example.crud.entity.Role;
 import com.example.crud.entity.Token;
-import com.example.crud.entity.VerficationStatus;
+import com.example.crud.entity.VerificationStatus;
 import com.example.crud.repository.TokenRepository;
 import com.example.crud.repository.UserInfoRepository;
 import com.example.crud.repository.UserRepository;
@@ -25,7 +25,7 @@ import java.util.UUID;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private UserInfoRepository userInfoRepository;
     @Autowired
@@ -163,6 +163,12 @@ public class UserService {
         userRepository.delete(user);
         return toResponseDto(user);
     }
+
+     public void toggleVisible(String username){
+        User user = userRepository.findByUsername(username) ;
+        user.setVisible(!user.isVisible());
+    }
+
 
 public void sendVerificationEmail(User user , String token)
             throws MessagingException {

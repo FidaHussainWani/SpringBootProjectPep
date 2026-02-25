@@ -8,7 +8,7 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.core.Authentication;
 import java.util.List;
 
 
@@ -48,6 +48,12 @@ public class UserController {
     public UserResponseDto deleteUser(@PathVariable long id){
         return userService.deleteUser(id) ;
     }
+  @GetMapping("/visible")
+    public ResponseEntity<String> toggleVisible(Authentication authentication){
+        String username = authentication.getName();
+        userService.toggleVisible(username);
 
+        return ResponseEntity.ok().build();
 }
 
+}

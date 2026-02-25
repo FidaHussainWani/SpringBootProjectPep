@@ -34,6 +34,9 @@ public class User {
      
     @Column(nullable = false , unique = true)
     private String email;
+   
+    
+
     // ===== EMAIL VERIFICATION FIELDS (ADD THIS PART ONLY) =====
 
 // account will remain false until email is verified
@@ -59,8 +62,8 @@ private Long tokenExpiry;
 
      @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     List<Comment> comments  = new ArrayList<>() ;
-    boolean visible;
-
+  
+        boolean visible;
 
     public void addPost(Post post) {
         posts.add(post);
