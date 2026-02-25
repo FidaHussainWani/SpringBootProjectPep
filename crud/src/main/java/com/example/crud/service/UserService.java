@@ -4,6 +4,7 @@ package com.example.crud.service;
 import com.example.crud.dto.UserDto;
 import com.example.crud.dto.UserResponseDto;
 import com.example.crud.entity.UserInfo;
+import com.example.crud.entity.Role;
 import com.example.crud.entity.Token;
 import com.example.crud.entity.VerficationStatus;
 import com.example.crud.repository.TokenRepository;
@@ -76,7 +77,9 @@ public class UserService {
 
 
         User user   = toEntity(userDto) ;
-        user.getUserInfo().setVerificationStatus(VerficationStatus.ONGOING);
+        user.setVisible(false);
+        
+        user.getUserInfo().setRole(Role.ROLE_UNVERIFIED);
         Token token =new Token();
         token.setUser(user);
         UUID uuid = UUID.randomUUID();

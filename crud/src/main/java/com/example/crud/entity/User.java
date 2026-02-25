@@ -28,9 +28,21 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+    
 
+     // ===== EMAIL VERIFICATION FIELDS (ADD THIS PART ONLY) =====
+     
     @Column(nullable = false , unique = true)
     private String email;
+    // ===== EMAIL VERIFICATION FIELDS (ADD THIS PART ONLY) =====
+
+// account will remain false until email is verified
+@Column(nullable = false)
+private boolean enabled = false;
+
+private String verificationToken;
+
+private Long tokenExpiry;
 
     @OneToOne(mappedBy = "user",
             cascade = CascadeType.ALL,
@@ -47,7 +59,7 @@ public class User {
 
      @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     List<Comment> comments  = new ArrayList<>() ;
-    
+    boolean visible;
 
 
     public void addPost(Post post) {

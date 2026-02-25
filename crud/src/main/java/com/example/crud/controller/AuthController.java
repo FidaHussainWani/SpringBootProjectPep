@@ -7,11 +7,11 @@ import com.example.crud.dto.UserDto;
 import com.example.crud.entity.Token;
 import com.example.crud.entity.User;
 import com.example.crud.entity.UserInfo;
-import com.example.crud.entity.VerficationStatus;
+import com.example.crud.entity.VerificationStatus;
 import com.example.crud.repository.TokenRepository;
 import com.example.crud.repository.UserRepository;
 import com.example.crud.service.UserService;
-
+import com.example.crud.entity.Role;
 import jakarta.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +73,9 @@ public ResponseEntity<String>register(@RequestBody UserDto userDto){
 
       Token t  = tokenRepository.findByToken(token) ;
       User user = t.getUser() ;
-      user.getUserInfo().setVerificationStatus(VerficationStatus.VERIFIED);
-
+       user.getUserInfo().setRole(Role.ROLE_USER);
+      user.getUserInfo().setVerificationStatus(VerificationStatus.VERIFIED);
+        userRepository.save(user);
 
       return ResponseEntity.ok("User is verified") ;
 

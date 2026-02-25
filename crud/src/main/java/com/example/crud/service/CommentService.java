@@ -23,9 +23,9 @@ public class CommentService {
 
 
     @Transactional
-    public Comment addComment(Long userId, Long postId, String content) {
+    public Comment addComment(String username, Long postId, String content) {
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Post post = postRepository.findById(postId)
@@ -40,27 +40,32 @@ public class CommentService {
     }
 
     @Transactional
-    public Comment updateComment(Long commentId, Long userId, String content) {
+    public Comment updateComment(Long commentId, String username, String content) {
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
-          if (comment.getUser().getId()!=userId) {
-        throw new RuntimeException("You can update only your comment");
-    }
+         if (!comment.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("You are not allowed to update this comment");
+        }
         comment.setComment(content);
         return commentRepository.save(comment);
     }
 
     @Transactional
-    public void deleteComment(Long commentId, Long userId, boolean isAdmin) {
+    public void deleteComment(Long commentId, String username) {
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Comment not found"));
 
-          if (!isAdmin && comment.getUser().getId() != userId)
- {
-        throw new RuntimeException("Not authorized to delete this comment");
-    }
+          boolean isCommentOwner =
+                comment.getUser().getUsername().equals(username);
+
+        boolean isPostOwner =
+                comment.getPost().getUser().getUsername().equals(username);
+
+        if (!isCommentOwner && !isPostOwner) {
+            throw new RuntimeException("You are not allowed to delete this comment");
+        }
 
 
         commentRepository.delete(comment);
@@ -68,7 +73,7 @@ public class CommentService {
 
     public List<Comment> getCommentsByPost(Long postId) {
 
-        return commentRepository.findByPostIdOrderByCreatedAtDesc(postId);
+        return commentRepository.findByPostId(postId);
     }
 
     public long countComments(Long postId) {

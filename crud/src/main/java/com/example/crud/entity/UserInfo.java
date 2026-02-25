@@ -19,7 +19,11 @@ public class UserInfo {
     private String phone ;
     private String location ;
 
-    private VerficationStatus verificationStatus ;
+     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
+    @Enumerated(EnumType.STRING)
+private VerificationStatus verificationStatus;
 
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
